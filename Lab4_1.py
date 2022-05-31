@@ -18,11 +18,6 @@ class HomeLibrary:
     def __str__(self):
         return 'Всего книг: {}\n{}'.format(len(self.books), "\n".join(map(str, self.books)))
 
-    def output_book(self):
-        for i, book in enumerate(self.books):
-            print("{}. {}".format(i + 1, book))
-        return Menu.select_item(len(self.books), 'книгу')
-
     def search_books(self, request, filter_r):
         request = request.lower()
         result = []
@@ -43,21 +38,15 @@ class HomeLibrary:
     def add_books(self, books):
         if isinstance(books, Book):
             self.books.append(books)
-            print('Книга добавлена')
         elif isinstance(books, list):
             self.books.extend(books)
-            print('Книги добавлены')
 
     def del_books(self, index=None):
         if len(self.books):
             if index is None:
-                print("Какую книгу удалить?")
-                index = self.output_book()
-                print("Книга удалена")
+                index = Menu.output_book(self.books)
             if 0 <= index < len(self.books):
                 del self.books[index]
-        else:
-            print("Книг нет")
 
     def sort_books(self, filter_r):
         if filter_r is None or filter_r == 'name':
@@ -122,6 +111,12 @@ class Menu:
             print("{}. {}".format(index + 1, el[0]))
         return Menu.select_item(len(PROPS_LIST))
 
+    @staticmethod
+    def output_book(books):
+        for i, book in enumerate(books):
+            print("{}. {}".format(i + 1, book))
+        return Menu.select_item(len(books), 'книгу')
+
 
 def main():
     home_lib = HomeLibrary()
@@ -133,6 +128,7 @@ def main():
             new_book = Book()
             home_lib.add_books(new_book)
         elif mode == 'del':
+            print("Какую книгу удалить?")
             home_lib.del_books()
         elif mode == 'search':
             name_filter, filter_r = PROPS_LIST[Menu.select_props('Поиск в библиотеке:')]
